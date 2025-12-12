@@ -3,6 +3,7 @@ package com.employeeboard.employee.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "shifts")
@@ -19,15 +20,22 @@ public class Shift {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column
-    private String shiftType; // e.g., "MORNING", "EVENING", "NIGHT"
+    @NotNull
+    @Column(name = "start_time", nullable = false)
+    private LocalTime startTime;
+
+    @NotNull
+    @Column(name = "end_time", nullable = false)
+    private LocalTime endTime;
 
     // Constructors
     public Shift() {}
 
-    public Shift(Long employeeId, LocalDate date) {
+    public Shift(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.employeeId = employeeId;
         this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     // Getters and Setters
@@ -39,7 +47,10 @@ public class Shift {
     
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
-    
-    public String getShiftType() { return shiftType; }
-    public void setShiftType(String shiftType) { this.shiftType = shiftType; }
+
+    public LocalTime getStartTime() { return startTime; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+
+    public LocalTime getEndTime() { return endTime; }
+    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
 }

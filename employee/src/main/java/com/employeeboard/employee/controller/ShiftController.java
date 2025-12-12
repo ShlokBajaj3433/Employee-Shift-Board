@@ -29,9 +29,8 @@ public class ShiftController {
 
     @GetMapping
     public ResponseEntity<List<Shift>> getShifts(
-            @RequestParam(required = false) Long employee,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return ResponseEntity.ok(shiftService.getShifts(employee, date));
+        return ResponseEntity.ok(shiftService.getShifts(date));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

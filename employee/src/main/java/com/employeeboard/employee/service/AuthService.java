@@ -3,6 +3,7 @@ package com.employeeboard.employee.service;
 import com.employeeboard.employee.dto.AuthResponse;
 import com.employeeboard.employee.dto.LoginRequest;
 import com.employeeboard.employee.model.User;
+import com.employeeboard.employee.repository.UserRepository;
 import com.employeeboard.employee.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +22,7 @@ public class AuthService {
     private JwtUtil jwtUtil;
     
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     public AuthResponse authenticate(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
@@ -31,7 +32,8 @@ public class AuthService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
         
-        User user = userService.findByUsername(request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
         
         return new AuthResponse(token, user.getRole(), user.getUsername());
     }

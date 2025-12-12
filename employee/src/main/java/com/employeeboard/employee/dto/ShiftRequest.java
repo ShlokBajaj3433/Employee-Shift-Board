@@ -2,6 +2,7 @@ package com.employeeboard.employee.dto;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class ShiftRequest {
     @NotNull(message = "Employee ID is required")
@@ -10,14 +11,20 @@ public class ShiftRequest {
     @NotNull(message = "Date is required")
     private LocalDate date;
 
-    private String shiftType;
+    @NotNull(message = "Start time is required")
+    private LocalTime startTime;
+
+    @NotNull(message = "End time is required")
+    private LocalTime endTime;
 
     // Constructors
     public ShiftRequest() {}
 
-    public ShiftRequest(Long employeeId, LocalDate date) {
+    public ShiftRequest(Long employeeId, LocalDate date, LocalTime startTime, LocalTime endTime) {
         this.employeeId = employeeId;
         this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     // Getters and Setters
@@ -27,6 +34,9 @@ public class ShiftRequest {
     public LocalDate getDate() { return date; }
     public void setDate(LocalDate date) { this.date = date; }
     
-    public String getShiftType() { return shiftType; }
-    public void setShiftType(String shiftType) { this.shiftType = shiftType; }
+    public LocalTime getStartTime() { return startTime; }
+    public void setStartTime(LocalTime startTime) { this.startTime = startTime; }
+    
+    public LocalTime getEndTime() { return endTime; }
+    public void setEndTime(LocalTime endTime) { this.endTime = endTime; }
 }

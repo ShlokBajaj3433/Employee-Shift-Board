@@ -2,19 +2,46 @@ import { useState, useEffect } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
-const ShiftTable = () => {
+const ShiftTable = ({ onRefresh }) => {
   const [shifts, setShifts] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [employeeId, setEmployeeId] = useState('');
   const [date, setDate] = useState('');
   const { isAdmin } = useAuth();
 
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  useEffect(() => {
+    if (onRefresh) {
+      fetchShifts();
+    }
+  }, [onRefresh]);
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await api.get('/employees');
+      setEmployees(response.data);
+    } catch (err) {
+      console.error('Failed to fetch employees:', err);
+    }
+  };
+
+  const getEmployeeCode = (employeeId) => {
+    const employee = employees.find(emp => emp.id === employeeId);
+    return employee ? employee.employeeCode : `ID: ${employeeId}`;
+  };
+
   const fetchShifts = async () => {
-    if (!employeeId || !date) return;
+    if (!employeeId && !date) return;
     
     try {
-      const response = await api.get('/shifts', {
-        params: { employee: employeeId, date }
-      });
+      const params = {};
+      if (employeeId) params.employee = employeeId;
+      if (date) params.date = date;
+      
+      const response = await api.get('/shifts', { params });
       setShifts(response.data);
     } catch (err) {
       console.error('Failed to fetch shifts:', err);
@@ -41,7 +68,8 @@ const ShiftTable = () => {
             type="number"
             value={employeeId}
             onChange={(e) => setEmployeeId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            placeholder="Optional"
           />
         </div>
         <div>
@@ -50,13 +78,13 @@ const ShiftTable = () => {
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
         </div>
         <div className="flex items-end">
           <button
             onClick={fetchShifts}
-            className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+            className="w-full bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition duration-200"
           >
             Search
           </button>
@@ -68,8 +96,9 @@ const ShiftTable = () => {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee Code</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
               {isAdmin() && (
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               )}
@@ -78,21 +107,25 @@ const ShiftTable = () => {
           <tbody className="bg-white divide-y divide-gray-200">
             {shifts.length === 0 ? (
               <tr>
-                <td colSpan={isAdmin() ? 4 : 3} className="px-6 py-4 text-center text-gray-500">
+                <td colSpan={isAdmin() ? 6 : 5} className="px-6 py-4 text-center text-gray-500">
                   No shifts found. Use the filters above to search.
                 </td>
               </tr>
             ) : (
               shifts.map((shift) => (
-                <tr key={shift.id}>
+                <tr key={shift.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{shift.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{shift.employeeId}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getEmployeeCode(shift.employeeId)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{shift.date}</td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {shift.startTime} - {shift.endTime}
+                  </td>
                   {isAdmin() && (
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => handleDelete(shift.id)}
-                        className="text-red-600 hover:text-red-900"
+                        className="text-gray-700 hover:text-gray-900"
                       >
                         Delete
                       </button>

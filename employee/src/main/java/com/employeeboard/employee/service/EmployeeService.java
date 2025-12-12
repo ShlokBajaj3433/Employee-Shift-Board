@@ -23,6 +23,12 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(Employee employee) {
+        // Auto-generate employee code if not provided or empty
+        if (employee.getEmployeeCode() == null || employee.getEmployeeCode().trim().isEmpty()) {
+            Employee savedEmployee = employeeRepository.save(employee);
+            savedEmployee.setEmployeeCode("EMP" + String.format("%03d", savedEmployee.getId()));
+            return employeeRepository.save(savedEmployee);
+        }
         return employeeRepository.save(employee);
     }
 
@@ -31,8 +37,8 @@ public class EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
         
         employee.setName(employeeDetails.getName());
-        employee.setEmail(employeeDetails.getEmail());
-        employee.setPhone(employeeDetails.getPhone());
+        employee.setEmployeeCode(employeeDetails.getEmployeeCode());
+        employee.setDepartment(employeeDetails.getDepartment());
         
         return employeeRepository.save(employee);
     }
