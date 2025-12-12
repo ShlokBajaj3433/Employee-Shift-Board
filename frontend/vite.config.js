@@ -14,3 +14,4 @@ export default defineConfig({
     }
   }
 })
+// Deployment to Vercel - Dec 12, 2025 with Railway backend integration
