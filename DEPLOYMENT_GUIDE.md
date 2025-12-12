@@ -59,10 +59,34 @@ git push -u origin main
    - `PGDATABASE`
    - `PGUSER`
    - `PGPASSWORD`
+   - Or copy the full `DATABASE_URL` (e.g., `postgresql://user:pass@host:port/dbname`)
 
 5. Connect to database and run initialization script:
-   - Use any PostgreSQL client or Railway's built-in SQL editor
-   - Run the contents of `employee/database_reset.sql`
+
+   **Option 1: Using Railway's Built-in Query Tool (Easiest)**
+   - In Railway, click on your PostgreSQL service
+   - Go to **"Data"** tab
+   - Click **"Query"** button
+   - Copy and paste entire contents of `employee/database_reset.sql`
+   - Click **"Run Query"**
+
+   **Option 2: Using psql Command Line**
+   ```bash
+   # Navigate to employee folder
+   cd "c:\codes\SpringBoot\Employee Shift Board\employee"
+   
+   # Run the script (replace with your DATABASE_URL)
+   psql "postgresql://user:password@host:port/database" -f database_reset.sql
+   ```
+
+   **Option 3: Using DBeaver/pgAdmin (GUI Tool)**
+   - Download DBeaver from https://dbeaver.io/
+   - Create new PostgreSQL connection
+   - Enter host, port, database, username, password from Railway
+   - Test connection
+   - Open SQL Editor
+   - Copy/paste contents of `employee/database_reset.sql`
+   - Execute (F5 or Execute button)
 
 ---
 
