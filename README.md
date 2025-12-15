@@ -152,5 +152,7 @@ SPRING_PROFILES_ACTIVE=development
 ### Frontend (.env)
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
+
+<!-- Vercel frontend deployment update -->
 ```
 
